@@ -6,7 +6,5 @@ Plug-and-play UI/UX components that can be used on any website or web-based appl
     - `scss`
         - `helpers` - Helper files used across SCSS (e.g., variables, mixins, functions, etc) 
         - `layouts` - Contains files used by the main sections of the layout. (e.g., header, footer, sidebar, etc)
-        - `themes` - Styling variants for different theme options (e.g., light, dark, etc)
         - `ui` - User interface elements (e.g., forms, tooltips, popovers, validation, etc)
         - `utilities` - Boilerplate elements (e.g., typography, media, print, etc)
-        - `widgets` - Extendable plug-and-play libraries.
