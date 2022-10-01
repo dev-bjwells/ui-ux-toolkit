@@ -1,0 +1,222 @@
+@use 'sass:map';
+@use "variables" as *;
+
+//=========================================================================//
+// MEDIA QUERY FUNCTIONS ##################################################
+//=========================================================================//
+//
+// READ A LIST OF MEDIA QUERIES AND SEPARATE THE LOGICAL DISJUNCTIONS INTO
+// DIFFERENT BRANCHES.
+//
+// @params {List}  $expressions - list of expressions passed to the function
+// @throws         $expressions - invalid expression
+// @return {List |Null}
+//
+//=========================================================================//
+@function get-query-branches($expressions) {
+  $result: '';
+  $has-groups: false;
+
+  // get initial snapshot and look for grouped objects
+  @each $expression in $expressions {
+    @if (str-length($result) != 0) {
+      $result: $result + ' and ';
+    }
+
+    @if (type-of($expression) == 'string') {
+      $result: $result + $expression;
+    } @else if (type-of($expression) == 'list') {
+      $result: $result + nth($expression, 1);
+      $has-groups: true;
+    } @else {
+      @warn '#{$expression} is not a valid expression.';
+    }
+  }
+
+  // if we have a group, create all possible combinations for the group
+  @if $has-groups {
+    @each $expression in $expressions {
+      @if (type-of($expression) == 'list') {
+        $first: nth($expression, 1);
+
+        @each $member in $expression {
+          @if ($member != $first) {
+            @each $partial in $result {
+              $result: join($result, str-replace-first($first, $member, $partial));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @return $result;
+}
+
+//=========================================================================//
+//
+// PARSE THE STRING OBJECT TO FORM A PROPER MEDIA QUERY EXPRESSION
+//
+// @params {String}  $expression - expression written as a string
+// @throws           type-of($expression) - a string is not detected
+// @throws           $expression - missing a relational operator
+// @throws           $unit - unknown unit is detected
+// @return {String|Null}
+//
+//=========================================================================//
+@function parse-expression($expression) {
+  $operator: '';
+  $value: '';
+  $element: '';
+  $result: '';
+  $is-width: true;
+
+  @if (type-of($expression) != 'string') {
+    @warn 'Expression with type `#{type-of($expression)}` is detected when a string is expected.';
+  }
+
+  // separate the operator from the rest of the expression
+  @if (str-slice($expression, 2, 2) == '=') {
+    $operator: str-slice($expression, 1, 2);
+    $value: str-slice($expression, 3);
+  } @else {
+    $operator: str-slice($expression, 1, 1);
+    $value: str-slice($expression, 2);
+  }
+
+  // check what type of expression is being used
+  @if map-has-key($breakpoints, $value) {
+    $result: map-get($breakpoints, $value);
+  } @else if map-has-key($media-expressions, $expression) {
+    $result: map-get($media-expressions, $expression);
+    $is-width: false;
+  } @else {
+    $result: to-number($value);
+  }
+
+  @if ($is-width) {
+    $unit: unit($result);
+    $interval: 0;
+
+    // check to see if the unit is valid
+    @if (map-has-key($unit-intervals, $unit)) {
+      $interval: map-get($unit-intervals, $unit);
+    } @else {
+      @warn 'Unknown unit: #{$unit}';
+    }
+
+    // check to see if a valid relational operator is being used in the query
+    @if ($operator == '>') {
+      $element: '(min-width: #{$result + $interval})';
+    } @else if ($operator == '<') {
+      $element: '(max-width: #{$result - $interval})';
+    } @else if ($operator == '>=') {
+      $element: '(min-width: #{$result})';
+    } @else if ($operator == '<=') {
+      $element: '(max-width: #{$result})';
+    } @else {
+      @warn '#{$expression} is missing a relational operator.';
+    }
+  } @else {
+    $element: $result;
+  }
+
+  @return $element;
+}
+
+//=========================================================================//
+//
+// REPLACE THE FIRST OCCURENCE OF THE STRING WITH THE REPLACEMENT STRING
+//
+// @params {String}  $search - lookup value
+// @params {String}  $replace - replacement value
+// @params {String}  $object - string to replace
+// @return {String|Null}
+//
+//=========================================================================//
+@function str-replace-first($search, $replace, $object) {
+  $search-start: str-index($object, $search);
+
+  @if $search-start == null {
+    @return $object;
+  }
+
+  $result: str-slice($object, 0, $search-start - 1);
+  $result: $result + $replace;
+  $result: $result + str-slice($object, $search-start + str-length($search));
+
+  @return $result;
+}
+
+//=========================================================================//
+//
+// CONVERT STRING TO A NUMERICAL VALUE
+//
+// @params {String}  $string - value to convert to a string
+// @return {List|Null}
+//
+//=========================================================================//
+@function to-number($string) {
+  // matrices
+  $strings: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9';
+  $numbers: 0 1 2 3 4 5 6 7 8 9;
+
+  // results
+  $result: 0;
+  $divider: 0;
+  $minus: false;
+
+  // loop through each character within the string
+  @for $i from 1 through str-length($string) {
+    $character: str-slice($string, $i, $i);
+    $index: index($strings, $character);
+
+
+    @if $character == '-' {
+      $minus: true;
+    } @else if $character == '.' {
+      $divider: 1;
+    } @else {
+      @if type-of($index) != 'number' {
+        $result: if($minus, $result * -1, $result);
+        @return _length($result, str-slice($string, $i));
+      }
+
+      $number: nth($numbers, $index);
+
+      @if $divider == 0 {
+        $result: $result * 10;
+      } @else {
+        $divider: $divider * 10;
+        $number: $number / $divider;
+      }
+
+      $result: $result + $number;
+    }
+  }
+
+  @return if($minus, $result * -1, $result);
+}
+
+//=========================================================================//
+//
+// DETECT WHETHER THE PROVIDED UNIT IS VALID BASED ON THE CURRENT WEBSITE
+// STANDARDS
+//
+// @params {Int}     $number - based number
+// @params {String}  $unit - unit of measurement used on the web
+// @return {String|Null}
+//
+//=========================================================================//
+@function _length($number, $unit) {
+  $strings: 'px' '%' 'em' 'rem' 'pt' 'vw' 'vh' 'vmin' 'vmax';
+  $units: 1px 1% 1em 1rem 1pt 1vw 1vh 1vmin 1vmax;
+  $index: index($strings, $unit);
+
+  @if type-of($index) != 'number' {
+    @warn 'Unknown unit `#{$unit}`.';
+    @return false;
+  }
+
+  @return $number * nth($units, $index);
+}

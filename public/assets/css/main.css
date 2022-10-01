@@ -1,0 +1,118 @@
+.color-main {
+  color: #14293E;
+}
+
+.bg-main {
+  background-color: #14293E;
+}
+
+.color-accent {
+  color: #EF767A;
+}
+
+.bg-accent {
+  background-color: #EF767A;
+}
+
+.color-success {
+  color: #28A745;
+}
+
+.bg-success {
+  background-color: #28A745;
+}
+
+.color-danger {
+  color: #DC3545;
+}
+
+.bg-danger {
+  background-color: #DC3545;
+}
+
+.color-warning {
+  color: #FFC107;
+}
+
+.bg-warning {
+  background-color: #FFC107;
+}
+
+.color-info {
+  color: #17A2b8;
+}
+
+.bg-info {
+  background-color: #17A2b8;
+}
+
+.color-muted {
+  color: #70869D;
+}
+
+.bg-muted {
+  background-color: #70869D;
+}
+
+.color-white {
+  color: #FFFFFF;
+}
+
+.bg-white {
+  background-color: #FFFFFF;
+}
+
+.ui__grid__container {
+  margin: auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 1fr);
+}
+
+.ui__grid__row {
+  display: grid;
+  -ms-writing-mode: lr-tb;
+      writing-mode: horizontal-tb;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-flow: row;
+  gap: 0.5rem;
+}
+.ui__grid__row .ui__grid__column {
+  padding: 0.5rem;
+}
+.ui__grid__row .ui__grid__column.span-01 {
+  grid-column: auto/span 1;
+}
+.ui__grid__row .ui__grid__column.span-02 {
+  grid-column: auto/span 2;
+}
+.ui__grid__row .ui__grid__column.span-03 {
+  grid-column: auto/span 3;
+}
+.ui__grid__row .ui__grid__column.span-04 {
+  grid-column: auto/span 4;
+}
+.ui__grid__row .ui__grid__column.span-05 {
+  grid-column: auto/span 5;
+}
+.ui__grid__row .ui__grid__column.span-06 {
+  grid-column: auto/span 6;
+}
+.ui__grid__row .ui__grid__column.span-07 {
+  grid-column: auto/span 7;
+}
+.ui__grid__row .ui__grid__column.span-08 {
+  grid-column: auto/span 8;
+}
+.ui__grid__row .ui__grid__column.span-09 {
+  grid-column: auto/span 9;
+}
+.ui__grid__row .ui__grid__column.span-10 {
+  grid-column: auto/span 10;
+}
+.ui__grid__row .ui__grid__column.span-11 {
+  grid-column: auto/span 11;
+}
+.ui__grid__row .ui__grid__column.span-12 {
+  grid-column: auto/span 12;
+}

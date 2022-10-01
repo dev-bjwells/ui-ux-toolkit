@@ -1,0 +1,50 @@
+// color maps
+$ui_color_map: (
+        "main": #14293E,
+        "accent": #EF767A,
+        "success": #28A745,
+        "danger": #DC3545,
+        "warning": #FFC107,
+        "info": #17A2b8,
+        "muted": #70869D,
+        "white": #FFFFFF
+);
+
+// grid
+$grid-column-limit: 12;
+$grid-gap: 0.5rem;
+$grid-padding: 0.5rem;
+
+// media queries
+$breakpoints: (
+        desktop: 1600px,
+        laptop: 1440px,
+        tablet-landscape: 1024px,
+        tablet-portrait: 768px,
+        smartphone: 576px,
+        mobile: 425px
+) !default;
+$media-expressions: (
+        "screen": "screen",
+        "print": "print",
+        "handheld" : "handheld",
+        "retina2x": (
+                "(-webkit-min-device-pixel-ratio: 2)",
+                "(min--moz-device-pixel-ratio: 2)",
+                "(-o-min-device-pixel-ratio: 2/1)",
+                "(min-resolution: #{round(2*96)}dpi)",
+                "(min-resolution: 2dppx)"
+        ),
+        "retina3x": (
+                "(-webkit-min-device-pixel-ratio: 3)",
+                "(min--moz-device-pixel-ratio: 3)",
+                "(-o-min-device-pixel-ratio: 3/1)",
+                "(min-resolution: #{round(3*96)}dpi)",
+                "(min-resolution: 3dppx)"
+        )
+) !default;
+$unit-intervals: (
+        "px": 1,
+        "em": 0.01,
+        "rem": 0.1
+) !default;

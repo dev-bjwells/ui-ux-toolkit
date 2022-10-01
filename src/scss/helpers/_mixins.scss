@@ -1,0 +1,50 @@
+@use 'functions' as *;
+
+//=========================================================================//
+// MEDIA QUERY MIXIN COMPONENT ############################################
+//=========================================================================//
+//
+// BREAKPOINT OPTIONS
+//    desktop: 1600px
+//    laptop: 1440px
+//    tablet-landscape: 1024px
+//    tablet-portait: 768px
+//    smartphone: 576px
+//    mobile: 425px
+//
+// EXPRESIONS: screen, print, handheld, retina2x, retina3x
+//     
+// EXAMPLES
+//     .test {
+//         @include media(">desktop") {
+//              background-color: #f9f9f9;
+//         }
+//         @include media(">=600px", "<tablet-landscape") {
+//              background-color: #ccc;
+//         }
+//         @include media("retina2x") {
+//              background-color: #eee;
+//         }
+//     }
+//
+//=========================================================================//
+@mixin media($conditions...) {
+  @for $i from 1 through length($conditions) {
+    $conditions: set-nth($conditions, $i, parse-expression(nth($conditions, $i)));
+  }
+
+  $branches: get-query-branches($conditions);
+  $query: '';
+
+  @each $branch in $branches {
+    @if (str-length($query) != 0) {
+      $query: $query + ', ';
+    }
+
+    $query: $query + $branch;
+  }
+
+  @media #{$query} {
+    @content;
+  }
+}
